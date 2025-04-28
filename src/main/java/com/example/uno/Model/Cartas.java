@@ -1,0 +1,23 @@
+package com.example.uno.Model;
+
+public class Cartas {
+
+    private String ruta;
+    private String tipodecarta;
+    private int color;
+
+    public Cartas(String tipodecarta, int color, String ruta) {
+        this.tipodecarta = tipodecarta;
+        this.color = color;
+        this.ruta = ruta;
+    }
+
+    // Getter para el atributo 'tipodecarta'
+    public String getTipodecarta() {
+        return tipodecarta;
+    }
+
+    public String getRutaImagen(){
+        return ruta;
+    }
+}
