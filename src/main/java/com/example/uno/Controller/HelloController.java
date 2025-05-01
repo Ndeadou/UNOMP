@@ -13,12 +13,20 @@ public class HelloController {
     private Button idBaraja;
 
     @FXML
-    private HBox idMazo1;
+    private  HBox idMazo1;
 
-    MesaDeJuego mesa = new MesaDeJuego();
+    private MesaDeJuego mesa = new MesaDeJuego();
     @FXML
     public void initialize() {
         mesa.crearCartas();
-        mesa.repartirCartas(5);
+        mesa.mezclarBaraja();
+        System.out.println("Tamaño de la baraja después de crear: " + mesa.barajaSiz());
     }
+
+    @FXML
+    public void darClickBaraja(){
+        mesa.repartirCartas(5, idMazo1); // Pasar idMazo1 como argumento
+    }
+
+
 }

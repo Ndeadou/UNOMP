@@ -14,8 +14,7 @@ public class Baraja {
         Collections.shuffle(this.cartas);
     }
 
-    /*public Cartas repartirCarta() {
-    }*/
+
 
     public int size() {
         return this.cartas.size();
@@ -28,60 +27,60 @@ public class Baraja {
     public void crearCartas() {
 
         //Debemos instanciar los numeros "0 y 2" manualmente
-        for (int i = 0; i < 9; i++ ) {
+        for (int i = 0; i < 10; i++ ) {
             for (int j = 1; j <= 4; j++ ) {
                 if(j==1){
-                    CartasN carta = new CartasN(j, "num", i, "/"+i+"_blue.png");
+                    CartasN carta = new CartasN(j, "num", i, "/Cartas/"+i+"_blue.png");
                     this.cartas.add(carta);
                 }else if (j==2){
-                    CartasN carta = new CartasN(j, "num", i, "/"+i+"_green.png");
+                    CartasN carta = new CartasN(j, "num", i, "/Cartas/"+i+"_green.png");
                     this.cartas.add(carta);
                 }else if (j==3) {
-                    CartasN carta = new CartasN(j, "num", i, "/"+i+"_red.png");
+                    CartasN carta = new CartasN(j, "num", i, "/Cartas/"+i+"_red.png");
                     this.cartas.add(carta);
                 }else {
-                    CartasN carta = new CartasN(j, "num", i, "/"+i+"_yellow.png");
+                    CartasN carta = new CartasN(j, "num", i, "/Cartas/"+i+"_yellow.png");
                     this.cartas.add(carta);
                 }
             }
         }
 
         //Comodines +2
-        Comodines masDosAzul = new Comodines(1, "comodin", "+2", "/2_wild_draw_blue.png");
+        Comodines masDosAzul = new Comodines(1, "comodin", "+2", "/Cartas/2_wild_draw_blue.png");
         this.cartas.add(masDosAzul);
-        Comodines masDosVerde = new Comodines(2, "comodin", "+2", "/2_wild_draw_green.png");
+        Comodines masDosVerde = new Comodines(2, "comodin", "+2", "/Cartas/2_wild_draw_green.png");
         this.cartas.add(masDosVerde);
-        Comodines masDosRojo = new Comodines(3, "comodin", "+2", "/2_wild_draw_red.png");
+        Comodines masDosRojo = new Comodines(3, "comodin", "+2", "/Cartas/2_wild_draw_red.png");
         this.cartas.add(masDosRojo);
-        Comodines masDosAmarillo = new Comodines(4, "comodin", "+2", "/2_wild_draw_yellow.png");
+        Comodines masDosAmarillo = new Comodines(4, "comodin", "+2", "/Cartas/2_wild_draw_yellow.png");
         this.cartas.add(masDosAmarillo);
 
         //Comodines reserva
-        Comodines reservaAzul = new Comodines(1, "comodin", "res", "/reserve_blue.png");
+        Comodines reservaAzul = new Comodines(1, "comodin", "res", "/Cartas/reserve_blue.png");
         this.cartas.add(reservaAzul);
-        Comodines reservaVerde = new Comodines(2, "comodin", "res", "/reserve_green.png");
+        Comodines reservaVerde = new Comodines(2, "comodin", "res", "/Cartas/reserve_green.png");
         this.cartas.add(reservaVerde);
-        Comodines reservaRojo= new Comodines(3, "comodin", "res", "/reserve_red.png");
+        Comodines reservaRojo= new Comodines(3, "comodin", "res", "/Cartas/reserve_red.png");
         this.cartas.add(reservaRojo);
-        Comodines reservaAmarillo = new Comodines(4, "comodin", "res", "/reserve_yellow.png");
+        Comodines reservaAmarillo = new Comodines(4, "comodin", "res", "/Cartas/reserve_yellow.png");
         this.cartas.add(reservaAmarillo);
 
         //Comodines bloqueo
-        Comodines bloqueoAzul = new Comodines(1, "comodin", "block", "/skip_blue.png");
+        Comodines bloqueoAzul = new Comodines(1, "comodin", "block", "/Cartas/skip_blue.png");
         this.cartas.add(bloqueoAzul);
-        Comodines bloqueoVerde = new Comodines(2, "comodin", "block", "/skip_green.png");
+        Comodines bloqueoVerde = new Comodines(2, "comodin", "block", "/Cartas/skip_green.png");
         this.cartas.add(bloqueoVerde);
-        Comodines bloqueoRojo = new Comodines(3, "comodin", "block", "/skip_red.png");
+        Comodines bloqueoRojo = new Comodines(3, "comodin", "block", "/Cartas/skip_red.png");
         this.cartas.add(bloqueoRojo);
-        Comodines bloqueoAmarillo = new Comodines(4, "comodin", "block", "/skip_yellow.png");
+        Comodines bloqueoAmarillo = new Comodines(4, "comodin", "block", "/Cartas/skip_yellow.png");
         this.cartas.add(bloqueoAmarillo);
 
         //Comodines +4
-        Comodines mas4 = new Comodines(0, "comodin", "+4", "/4_wild_draw.png");
+        Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
         this.cartas.add(mas4);
 
         //Comodines cambiodecolor
-        Comodines cambioColor = new Comodines(0, "comodin", "camb", "/wild.png");
+        Comodines cambioColor = new Comodines(0, "comodin", "camb", "/Cartas/wild.png");
         this.cartas.add(cambioColor);
 
     }
