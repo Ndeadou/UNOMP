@@ -5,7 +5,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 // Las animaciones de abajo hay que importarlas en otra clase
 import javafx.animation.TranslateTransition;
+import javafx.stage.Stage;
 import javafx.util.Duration;
+import javafx.scene.layout.HBox;
 
 public class MesaDeJuego {
 
@@ -13,18 +15,32 @@ public class MesaDeJuego {
     JugadorH jugadorh = new JugadorH();
     JugadorCPU jugadorCPU = new JugadorCPU();
 
-    //Hay que comenzar a crear funciones con el scene builder abierto
+
     public void crearCartas() {
         baraja.crearCartas();
     }
 
-    public void repartirCartas(int num) {
-        //idMazo1.getChildren().clear(); copiar esto cuando se implemente en el controller
-        for (int i = baraja.size() - 1; i > baraja.size() - num; i--){
-            Cartas carta = baraja.getcarta(i);
-            Button cartaButton = crearBotonCarta(carta, i);
+    public void mezclarBaraja(){
+        baraja.mezclarBaraja();
+    }
+
+    public void repartirCartas(int num, HBox mazoJugador) {
+        if (mazoJugador != null) {
+            mazoJugador.getChildren().clear();
+            System.out.println("Tamaño de la baraja al repartir: " + baraja.size());
+            for (int i = baraja.size() - 1; i >= baraja.size() - num; i--){
+                Cartas carta = baraja.getcarta(i);
+                Button cartaButton = crearBotonCarta(carta, i);
+                mazoJugador.getChildren().add(cartaButton);
+
+                //Hay que hacer que se eliminen las cartas que se vayan repartiendo de la baraja
+            }
+        } else {
+            System.err.println("Error: idMazo1 es null en MesaDeJuego.");
         }
     } // RECUERDA CREAR UN CLASE QUE EVALÚE LAS JUGADAS PARA AHORRAR CÒDIGO Y NO PONERLO AQUÍ
+
+
 
     public Button crearBotonCarta(Cartas carta, int indice ) {
         Button cartaButton = new Button();
@@ -33,6 +49,7 @@ public class MesaDeJuego {
         cartaImageView.setFitHeight(88);
         cartaButton.setGraphic( cartaImageView );
         cartaButton.setUserData(carta);
+
 
         // Todo el codigo en lo que queda de funcion va en otra clase enfocada en animaciones
         // Efecto de elevación (opcional)
@@ -49,9 +66,13 @@ public class MesaDeJuego {
         });
 
         // Establecer la posición horizontal (efecto acordeón)
-        cartaButton.setTranslateX(-20 * indice); // Ajusta el valor según necesites
+        //cartaButton.setTranslateX(-1 * indice); // Ajusta el valor según necesites
 
         return cartaButton;
 
     }
+    public int barajaSiz(){
+        return baraja.size();
+    }
 }
+
