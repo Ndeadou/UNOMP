@@ -1,19 +1,28 @@
 package com.example.uno.Model;
 
+import com.example.uno.Controller.HelloController;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 // Las animaciones de abajo hay que importarlas en otra clase
 import javafx.animation.TranslateTransition;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.layout.HBox;
 
+
 public class MesaDeJuego {
 
+    private HelloController controlador;
+
+
+    public MesaDeJuego(HelloController controlador) {
+        this.controlador = controlador;
+    }
+
     Baraja baraja = new Baraja();
-    JugadorH jugadorh = new JugadorH();
-    JugadorCPU jugadorCPU = new JugadorCPU();
+    public Jugador jugadorH = new Jugador();
+    public Jugador jugadorCPU = new Jugador();
+    private int turno = 0;
 
 
     public void crearCartas() {
@@ -24,25 +33,33 @@ public class MesaDeJuego {
         baraja.mezclarBaraja();
     }
 
-    public void repartirCartas(int num, HBox mazoJugador) {
-        if (mazoJugador != null) {
-            mazoJugador.getChildren().clear();
-            System.out.println("Tamaño de la baraja al repartir: " + baraja.size());
-            for (int i = baraja.size() - 1; i >= baraja.size() - num; i--){
-                Cartas carta = baraja.getcarta(i);
-                Button cartaButton = crearBotonCarta(carta, i);
-                mazoJugador.getChildren().add(cartaButton);
+    /**
+     * Las siguientes 2 funciones fueron separadas ya que necesitaba usar leerMazo() de forma aislada dentro de la funcion
+     * crear boton carta especificamente en setOnMouseClicked(linea 68) por esa misma razon es que se pasan los parametros HBox
+     * y Jugador tantas veces de funcion en funcion.
+     * Observa que ahora usamos leer mazo para mostrar en pantalla el mazo actualizado,sea de la CPU o del jugador
+     * (Se emplea en repCartas y crearBotonCarta)
+     *
+     */
+    public void repCartas(Jugador jugador, HBox mazoPlayer) {
+            jugador.addCarta(baraja.getCarta(baraja.size() - 1));
+            baraja.eliminarCarta(baraja.getCarta(baraja.size() - 1));
+            leerMazo(jugador, mazoPlayer);
 
-                //Hay que hacer que se eliminen las cartas que se vayan repartiendo de la baraja
-            }
-        } else {
-            System.err.println("Error: idMazo1 es null en MesaDeJuego.");
+    }
+    public void leerMazo(Jugador jugador, HBox mazoPlayer) {
+        mazoPlayer.getChildren().clear();//Para entender esta linea silenciala y corre el juego dandole a baraja
+        for(int i = 0; i < jugador.mazoSize(); i++) {
+            Cartas carta = jugador.getCarta(i);
+            Button cartaButton = crearBotonCarta(carta, i, jugador, mazoPlayer);//El "i" se usa para la animacion de acordeon
+            mazoPlayer.getChildren().add(cartaButton);
         }
-    } // RECUERDA CREAR UN CLASE QUE EVALÚE LAS JUGADAS PARA AHORRAR CÒDIGO Y NO PONERLO AQUÍ
+    }
 
 
+    // RECUERDA CREAR UN CLASE QUE EVALÚE LAS JUGADAS PARA AHORRAR CÒDIGO Y NO PONERLO AQUÍ
 
-    public Button crearBotonCarta(Cartas carta, int indice ) {
+    public Button crearBotonCarta(Cartas carta, int indice, Jugador jugador, HBox mazoPlayer) {
         Button cartaButton = new Button();
         ImageView cartaImageView = new ImageView( new Image(getClass().getResourceAsStream(carta.getRutaImagen()))); // Preguntar al profe
         cartaImageView.setFitWidth(70);
@@ -50,6 +67,18 @@ public class MesaDeJuego {
         cartaButton.setGraphic( cartaImageView );
         cartaButton.setUserData(carta);
 
+        //esta funcion es la clave para el click de las cartas.(elimina del mazo y añade a la pila)
+        cartaButton.setOnMouseClicked(event -> {
+            controlador.manejarClicCarta(event);
+            jugadorH.removeCarta(carta);
+            leerMazo(jugador, mazoPlayer);
+
+            //comenzar a escribir la logica del juego.
+            //crear una forma de almacenar la ultima carta de la pila y su data
+            //crear una funcion que evalue si la carta clickeada se puede poner en la pila o no dependiendo de la data
+            //esa funcion sera reutilizada tambien para la CPU con un ciclo que itere su mazo
+            //
+        });
 
         // Todo el codigo en lo que queda de funcion va en otra clase enfocada en animaciones
         // Efecto de elevación (opcional)
@@ -64,6 +93,8 @@ public class MesaDeJuego {
             transition.setToY(0);
             transition.play();
         });
+
+
 
         // Establecer la posición horizontal (efecto acordeón)
         //cartaButton.setTranslateX(-1 * indice); // Ajusta el valor según necesites

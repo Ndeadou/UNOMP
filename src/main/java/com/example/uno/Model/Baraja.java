@@ -14,13 +14,15 @@ public class Baraja {
         Collections.shuffle(this.cartas);
     }
 
-
+    public void eliminarCarta(Cartas carta) {
+        this.cartas.remove(carta);
+    }
 
     public int size() {
         return this.cartas.size();
     }
 
-    public Cartas getcarta(int i){
+    public Cartas getCarta(int i){
         return this.cartas.get(i);
     }
 

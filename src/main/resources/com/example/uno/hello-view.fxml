@@ -12,7 +12,7 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
-        <Button fx:id="idBaraja" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#darClickBaraja" prefHeight="88.0" prefWidth="70.0" translateX="-354.0" translateY="-188.0">
+        <Button fx:id="idBaraja" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#darClickBaraja" prefHeight="88.0" prefWidth="70.0" translateX="-354.0">
             <graphic>
                 <ImageView fitHeight="150.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
                     <image>
@@ -20,6 +20,7 @@
                     </image>
                 </ImageView>
             </graphic></Button>
-        <HBox fx:id="idMazo1" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" translateY="135.0" />
+      <ImageView fx:id="pila" fitHeight="100.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" translateY="-10.0" />
+        <HBox fx:id="idMazo1" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" translateY="70.0" />
     </children>
 </VBox>
