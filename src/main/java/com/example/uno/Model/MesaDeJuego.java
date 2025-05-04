@@ -25,6 +25,7 @@ public class MesaDeJuego {
     private int turno = 0;
 
 
+
     public void crearCartas() {
         baraja.crearCartas();
     }
@@ -72,6 +73,11 @@ public class MesaDeJuego {
             controlador.manejarClicCarta(event);
             jugadorH.removeCarta(carta);
             leerMazo(jugador, mazoPlayer);
+
+            if (jugadorH.mazoSize() == 1) { //Este condicional evalua si el tamaño de las cartas que tiene jugadorH es igual a 1
+                // y si es así llama a la funcion que está en hello controller que contiene el hilo
+                controlador.activarTemporizadorUNO(); // este método debe estar en HelloController
+            }
 
             //comenzar a escribir la logica del juego.
             //crear una forma de almacenar la ultima carta de la pila y su data
