@@ -12,6 +12,14 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
 import com.example.uno.Model.Cartas;
 
+//DEA
+import javafx.stage.Stage;
+import javafx.stage.Modality;
+import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.layout.VBox;
+import javafx.geometry.Pos;
+
 
 
 import javax.swing.*;
@@ -78,6 +86,28 @@ public class HelloController {
         }
     }
 
+    public void mostrarVentanaUNO() {
+        Stage ventanaUNO = new Stage();
+        ventanaUNO.initModality(Modality.APPLICATION_MODAL); // Bloquea interacción con otras ventanas
+        ventanaUNO.setTitle("¡Declara UNO!");
+        ventanaUNO.setMinWidth(250);
+
+        Button botonUNO = new Button("¡UNO!");
+        botonUNO.setOnAction(e -> {
+            presionoUNO = true; // actualiza tu variable
+            ventanaUNO.close(); // cierra la ventana emergente
+        });
+
+        VBox layout = new VBox(15);
+        layout.getChildren().addAll(botonUNO);
+        layout.setAlignment(Pos.CENTER);
+
+        Scene scene = new Scene(layout);
+        ventanaUNO.setScene(scene);
+        ventanaUNO.showAndWait(); // Espera a que se cierre
+    }
+
+
     private boolean presionoUNO = false; //este es la variable buleana que dice que por el momento es mentira que el humano ha presionado el boton
 
     public void activarTemporizadorUNO() {
@@ -86,6 +116,7 @@ public class HelloController {
 
         new Thread(() -> { //Aquí se crea el hilo a por qué se crea? porque si se mandara el sleep afuera mandaria a la verga el boton
             try {
+                Platform.runLater(() -> mostrarVentanaUNO());
                 Thread.sleep(3000); // Aquí esta lo que hace es mandar a mimir un rato el hilito por 3000 milisengundos que son 3 sec wei
                 if (!presionoUNO) { // Este condicional lo que hace es verificar si despues de los 3 segundos o el humano no presionó el boton
                     //se come una carta

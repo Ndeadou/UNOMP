@@ -10,5 +10,8 @@ public class  Comodines extends Cartas {
         super(tipodecarta, color, ruta);
         this.simbolo = simbolo;
     }
+    public String getSimbolo() {
+        return simbolo;
+    }
 }
 

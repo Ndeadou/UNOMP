@@ -14,6 +14,11 @@ public class MesaDeJuego {
 
     private HelloController controlador;
 
+    private Cartas cartaPila;
+
+    private int turno;
+
+    private boolean clickeo;
 
     public MesaDeJuego(HelloController controlador) {
         this.controlador = controlador;
@@ -22,7 +27,6 @@ public class MesaDeJuego {
     Baraja baraja = new Baraja();
     public Jugador jugadorH = new Jugador();
     public Jugador jugadorCPU = new Jugador();
-    private int turno = 0;
 
 
 
@@ -73,7 +77,10 @@ public class MesaDeJuego {
             controlador.manejarClicCarta(event);
             jugadorH.removeCarta(carta);
             leerMazo(jugador, mazoPlayer);
+            click = true;
+            cartaClick
 
+            //cambiar la ubicacion del condicional del hilo
             if (jugadorH.mazoSize() == 1) { //Este condicional evalua si el tamaño de las cartas que tiene jugadorH es igual a 1
                 // y si es así llama a la funcion que está en hello controller que contiene el hilo
                 controlador.activarTemporizadorUNO(); // este método debe estar en HelloController
@@ -100,6 +107,22 @@ public class MesaDeJuego {
             transition.play();
         });
 
+        //Logica condicional para habilitar y deshabilitar el boton
+        if (turno == 1){
+            cartaButton.setDisable(false);
+        } else if (turno == 2) {
+            cartaButton.setDisable(true);
+        } else {
+            cartaButton.setDisable(false);
+        }
+
+        // Condicional para bloquear cartas
+        if (evaluar(carta)){
+            cartaButton.setDisable(false);
+        } else {
+            cartaButton.setDisable(true);
+        }
+
 
 
         // Establecer la posición horizontal (efecto acordeón)
@@ -110,6 +133,96 @@ public class MesaDeJuego {
     }
     public int barajaSiz(){
         return baraja.size();
+    }
+
+
+    public boolean evaluar(Cartas carta) {
+        boolean pedo = false;
+        //Aquí vamos a transformar la carta de la pila al tipo que sea necesario para compararla con la carta del parametro
+        CartasN pilaN = new CartasN(0, null, 0, null);
+        Comodines pilaC;
+        if (cartaPila instanceof CartasN){
+            pilaN = (CartasN) cartaPila;
+        }
+
+        //Aquí vamos a comparar la carta de la pila ya transformada con la pila del parametro
+
+        if (carta instanceof CartasN) {
+            CartasN cartaN = (CartasN) carta;
+            if (carta.getColor() == cartaPila.getColor() || cartaN.getNumero() == pilaN.getNumero()) {
+                pedo = true;
+            } else {
+                pedo = false;
+            }
+        }else if (carta.getTipodecarta() == "comodin") {
+            if (carta.getColor() == cartaPila.getColor() || carta.getColor() == 0) {
+                pedo = true;
+            }else{
+                pedo = false;}
+        } return pedo;
+    }
+
+
+
+
+
+
+
+
+
+
+
+    //Logica
+
+    public void jugar (HBox mazoPlayer) {
+
+        boolean hayGanador = false;
+
+        while(!hayGanador){
+            hayGanador = verificarWinner(); //No ha sido creada hasta el momento
+            if (turno == 1){
+                turnoHumano(mazoPlayer);
+            }else if(turno == 2){
+                turnoCpu(); // No creada hasta el momento
+            }else{
+                System.out.println("No se puede jugar");
+            }
+        } //Aquí se coloca el ganador y la vuelta entera para finalizar
+    }
+
+
+
+    public void turnoHumano(HBox mazoPlayer) {
+
+        if (mazoVacio()){ // No ha sido creada
+            repCartas(jugadorH, mazoPlayer);
+            turno =2;
+        }
+    }
+
+    private boolean click = false;
+    private Cartas cartaClick;
+
+    public void cartaClicked(Cartas carta, HBox mazoPlayer) {
+        if (carta instanceof Comodines){
+            Comodines cartaC = (Comodines) carta;
+            if (cartaC.getSimbolo() == "+2" ) {
+                for (int i = 0; i <2; i++){
+                    //repCartas(jugadorCPU, mazoPlayer); Hay que crear una funcion que reparta par al cpu porque dont exist
+                    turno = 1;
+                }
+            } else if (cartaC.getSimbolo() == "+4"){
+                for (int i = 0; i < 4; i++){
+                    //repCartas(jugadorCPU, mazoPlayer); Hay que crear una funcion que reparta par al cpu porque dont exist
+                    turno = 1;
+                }
+            } else if (cartaC.getSimbolo() == "block"){
+                turno = 1;
+            }
+        } else {
+            turno = 2;
+        }
+        cartaPila = carta;
     }
 }
 
