@@ -20,4 +20,8 @@ public class Cartas {
     public String getRutaImagen(){
         return ruta;
     }
+
+    public int getColor() {
+        return color;
+    }
 }
