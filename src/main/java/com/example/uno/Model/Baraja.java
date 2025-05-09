@@ -1,9 +1,7 @@
 package com.example.uno.Model;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Collections;
-import java.util.concurrent.Callable;
 
 public class Baraja {
 
@@ -57,7 +55,7 @@ public class Baraja {
         Comodines masDosAmarillo = new Comodines(4, "comodin", "+2", "/Cartas/2_wild_draw_yellow.png");
         this.cartas.add(masDosAmarillo);
 
-        //Comodines reserva
+       /* //Comodines reserva
         Comodines reservaAzul = new Comodines(1, "comodin", "res", "/Cartas/reserve_blue.png");
         this.cartas.add(reservaAzul);
         Comodines reservaVerde = new Comodines(2, "comodin", "res", "/Cartas/reserve_green.png");
@@ -66,7 +64,7 @@ public class Baraja {
         this.cartas.add(reservaRojo);
         Comodines reservaAmarillo = new Comodines(4, "comodin", "res", "/Cartas/reserve_yellow.png");
         this.cartas.add(reservaAmarillo);
-
+*/
         //Comodines bloqueo
         Comodines bloqueoAzul = new Comodines(1, "comodin", "block", "/Cartas/skip_blue.png");
         this.cartas.add(bloqueoAzul);
@@ -77,14 +75,14 @@ public class Baraja {
         Comodines bloqueoAmarillo = new Comodines(4, "comodin", "block", "/Cartas/skip_yellow.png");
         this.cartas.add(bloqueoAmarillo);
 
-        //Comodines +4
+        /*//Comodines +4
         Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
         this.cartas.add(mas4);
 
         //Comodines cambiodecolor
         Comodines cambioColor = new Comodines(0, "comodin", "camb", "/Cartas/wild.png");
         this.cartas.add(cambioColor);
-
+*/
     }
 
 

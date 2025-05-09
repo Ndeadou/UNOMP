@@ -9,4 +9,8 @@ public class CartasN extends Cartas{
         super(tipodecarta, color, ruta);
         this.numero = numero;
     }
+
+    public int getNumero() {
+        return numero;
+    }
 }

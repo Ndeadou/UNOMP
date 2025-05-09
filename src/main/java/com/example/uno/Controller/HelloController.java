@@ -1,20 +1,14 @@
 package com.example.uno.Controller;
 
+import com.example.uno.Model.Cartas;
 import com.example.uno.Model.MesaDeJuego;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-//Los siguientes imports son para leer la imagen del boton clickeado gracias al evento asignado en mesa de juego
-import javafx.scene.input.MouseEvent;
-import javafx.scene.image.ImageView;
 import javafx.scene.image.Image;
-import com.example.uno.Model.Cartas;
-
-
-
-import javax.swing.*;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
 
 public class HelloController {
     @FXML
@@ -46,16 +40,21 @@ public class HelloController {
     public void initialize() {
         mesa.crearCartas();
         mesa.mezclarBaraja();
-        for(int i =0; i<5;i++){
-            darClickBaraja();
-        }
         System.out.println("Tamaño de la baraja después de crear: " + mesa.barajaSiz());
+        mesa.jugar(idMazo1, idMazo2);
     }
 
     @FXML
     public void darClickBaraja(){
-        mesa.repCartas(mesa.jugadorH, idMazo1);// Pasar idMazo1 como argumento
+        mesa.repPlayer( idMazo1);// Pasar idMazo1 como argumento
         System.out.println("Tamaño de la baraja después de repartir: " + mesa.barajaSiz());
+    }
+
+    public HBox getMazoPlayer() {
+        return idMazo1;
+    }
+    public HBox getMazoCpu() {
+        return idMazo2;
     }
 
 
@@ -77,6 +76,15 @@ public class HelloController {
             System.out.println("No se encontró información de la carta en el botón.");
         }
     }
+    public void leerNuevaPila(Cartas carta) {
+        Image imagen = new Image(getClass().getResourceAsStream(carta.getRutaImagen()));
+        pila.setImage(imagen);
+    }
+
+    public void primCarta(String cartaRuta) {
+        Image imagen = new Image(getClass().getResourceAsStream(cartaRuta));
+        pila.setImage(imagen);
+    }
 
     private boolean presionoUNO = false; //este es la variable buleana que dice que por el momento es mentira que el humano ha presionado el boton
 
@@ -93,7 +101,7 @@ public class HelloController {
                     Platform.runLater(() -> { // a ver esto se usa porque estamos en un hilo secundario y Javafx solo permite modificar la interfaz
                         // (como repartir cartas) desde el hilo principal
                         // entonces Platform.runLater() es como decir: “Ejecuta esto dentro de la interfaz gráfica, cuando sea seguro.”
-                        mesa.repCartas(mesa.jugadorH, idMazo1);// Aquí se aplica la penalización: el jugador humano roba una carta como castigo por no decir "UNO".
+                        mesa.repPlayer( idMazo1);// Aquí se aplica la penalización: el jugador humano roba una carta como castigo por no decir "UNO".
                         System.out.println("¡Penalizado por no decir UNO!"); //Esto no mas es pa que aparezca en la consolita abajo hay un else que pues es otro msj
                     });
                 } else {
