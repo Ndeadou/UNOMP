@@ -24,4 +24,8 @@ public class Cartas {
     public int getColor() {
         return color;
     }
+
+    public void setColor(int color) {
+        this.color = color;
+    }
 }
