@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
 import java.util.Objects;
+import java.util.Random;
 
 
 public class MesaDeJuego {
@@ -26,10 +27,23 @@ public class MesaDeJuego {
     public Jugador jugadorCPU = new Jugador();
     private int turno = 1;
     Cartas cartaPila;
-    boolean hayGanador = false;
+    String ganador;
     boolean cartasRepartidas = false;
 
-
+    //La siguiente funcion es la que le dará fin al juego.Verá si algun jugador ganó cambiando el bool "hayGanador"
+    // ademas es la encargada de mostrar en la interfaz las felicitaciones etc..
+    public boolean hayGanador(){
+        boolean ganaron  = false;
+        if(jugadorH.mazoSize() == 0){
+            ganaron = true;
+            ganador = "El humano";
+        }else if(jugadorCPU.mazoSize() == 0){
+            ganaron = true;
+            ganador = "El cpu";
+        }
+        return ganaron;
+        //si nada de lo anterior sucede se sigue jugando normal.
+    }
 
     public void crearCartas() {
         baraja.crearCartas();
@@ -64,9 +78,31 @@ public class MesaDeJuego {
             Cartas carta = jugadorH.getCarta(i);
             Button cartaButton = crearBotonCarta(carta, i, mazoPlayer);//El "i" se usa para la animacion de acordeon
             mazoPlayer.getChildren().add(cartaButton);
+            if(turno != 1){
+                cartaButton.setDisable(true);
+            }
+        }
+
+        if(turno == 1 && mazoVacio(jugadorH) && cartasRepartidas){
+            pausaJugador(mazoPlayer);
+            /*
+            turno = 2;
+            repPlayer(mazoPlayer);
+            System.out.println("Jugador COME");
+            ejecutarTurnoCpu(controlador.getMazoCpu());*/
         }
     }
 
+    public void pausaJugador(HBox mazoPlayer) {
+        PauseTransition pausa = new PauseTransition(Duration.seconds(2));
+        pausa.setOnFinished(e -> {
+            turno = 2;
+            repPlayer(mazoPlayer);
+            System.out.println("Jugador COME");
+            ejecutarTurnoCpu(controlador.getMazoCpu());
+        });
+        pausa.play();
+    }
 
     /**
      * LAS SIGUIENTES DOS FUNCIONES SON HERRAMIENTAS PARA LA CPU.
@@ -102,14 +138,8 @@ public class MesaDeJuego {
 
         //Ahora esta mejor escrita la bloqueada de cartas.
         if(turno == 1 ){
-            if(mazoVacio(jugadorH) && cartasRepartidas && indice == jugadorH.mazoSize()-1){
-                turno = 2;
-                repPlayer(mazoPlayer);
-                System.out.println("Jugador COME");
-                cartaButton.setDisable(true);
-                ejecutarTurnoCpu(controlador.getMazoCpu());
-            }
-            else if (evaluar(carta)){
+
+            if (evaluar(carta)){
                 cartaButton.setDisable(false);
             }else {
                 cartaButton.setDisable(true);
@@ -127,7 +157,7 @@ public class MesaDeJuego {
             cartaClicked(carta,controlador.getMazoCpu());
 
 
-
+            //Move o arregla la funcion directamente q esta basurota es la q no deja q funcione el code
             if (jugadorH.mazoSize() == 1) { //Este condicional evalua si el tamaño de las cartas que tiene jugadorH es igual a 1
                 // y si es así llama a la funcion que está en hello controller que contiene el hilo
                 controlador.activarTemporizadorUNO(); // este método debe estar en HelloController
@@ -169,10 +199,15 @@ public class MesaDeJuego {
         cartaPila = baraja.getCarta(0);
         baraja.eliminarCarta(cartaPila);
         controlador.primCarta(cartaPila.getRutaImagen());
+
+        Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
+        jugadorH.addCarta(mas4);
         for(int i = 0; i < 5; i++) {
             repPlayer(mazoPlayer);
             repCpu(mazoCpu);
         }cartasRepartidas = true;
+        leerMazo(mazoPlayer);
+
     }
 
     public boolean mazoVacio(Jugador cualquierJugador) {
@@ -233,16 +268,28 @@ public class MesaDeJuego {
             } else if (cartaC.getSimbolo() == "+4"){
                 for (int i = 0; i < 4; i++){
                     repCpu(mazoCpu);
-                }
-                System.out.println("Jugador tiro comodin +4");
+                }System.out.println("Jugador tiro comodin +4");
+                carta.setColor(VentanaEmergente.mostrarDialogoSeleccionColor());
             } else if (cartaC.getSimbolo() == "block"){
                 System.out.println("Jugador tiro comodin BLOQUEO");
                 //No pasa nada, se supone que el turno sigue siendo el mismo
+            }else if(cartaC.getSimbolo() == "camb"){
+                carta.setColor(VentanaEmergente.mostrarDialogoSeleccionColor());
+                turno = 2;
             }
             cartaPila = carta;
             controlador.leerNuevaPila(cartaPila);
-            leerMazoCpu(mazoCpu);
+
             leerMazo(controlador.getMazoPlayer());
+            if (!hayGanador() && turno == 2) {
+                ejecutarTurnoCpu(controlador.getMazoCpu());
+            }else if(!hayGanador() && turno == 1){
+                leerMazoCpu(mazoCpu);
+            }else if(hayGanador()){
+                System.out.println("Hay Ganador y es : "+ganador);
+                turno = 0;
+                controlador.getMazoPlayer().getChildren().clear();
+            }
         } else if (carta instanceof CartasN) {
             //Aqui definimos lo que pasa si la carta es la de seleccionar color, ya que la de retorno ha sido eliminada
             //Usa gemini para crear una interfaz funcional dentro de model para la ventana q selecciona el color
@@ -254,16 +301,15 @@ public class MesaDeJuego {
 
             turno = 2;
             leerMazo(controlador.getMazoPlayer());
-            if (!hayGanador) {
+            if (!hayGanador()) {
                 ejecutarTurnoCpu(controlador.getMazoCpu());
             }else{
-                //hayGanador es true entonces:
-                // Mostrar pantalla de victoria o mensaje
+                System.out.println("Hay Ganador y es : "+ ganador);
                 turno = 0;
             }
         }
     }
-
+    Random random = new Random();
     public void cartaSelected(Cartas carta, HBox mazoPlayer) {
         if (carta instanceof Comodines){
             Comodines cartaC = (Comodines) carta;
@@ -274,17 +320,29 @@ public class MesaDeJuego {
             } else if (cartaC.getSimbolo() == "+4"){
                 for (int i = 0; i < 4; i++){
                     repPlayer(mazoPlayer);
-                }
+                }carta.setColor(random.nextInt(4) + 1);
             } else if (cartaC.getSimbolo() == "block"){
                 //No pasa nada, se supone que el turno sigue siendo el mismo
+            } else if (cartaC.getSimbolo() == "camb") {
+                turno = 1;
+                carta.setColor(random.nextInt(4) + 1);
             }
 
             cartaPila = carta;
             controlador.leerNuevaPila(cartaPila);
             jugadorCPU.removeCarta(carta);
             leerMazoCpu(controlador.getMazoCpu());
+
+            if(hayGanador()){
+                System.out.println("Hay Ganador y es : "+ganador);
+                turno = 0;
+            }
             leerMazo(mazoPlayer);
-            ejecutarTurnoCpu(controlador.getMazoCpu());
+
+            if(turno == 2){
+                ejecutarTurnoCpu(controlador.getMazoCpu());
+            }
+
 
         } else if(carta instanceof CartasN){
             cartaPila = carta;
@@ -293,20 +351,17 @@ public class MesaDeJuego {
             leerMazoCpu(controlador.getMazoCpu());
             //leerMazo(mazoPlayer);
             turno = 1;
+            if(hayGanador()){
+                System.out.println("Hay Ganador y es : "+ganador);
+                turno = 0;
+            }
             leerMazo(mazoPlayer);
 
-            //Aqui definimos lo que pasa si la carta es la de seleccionar color, ya que la de retorno ha sido eliminada
-            //Usa gemini para crear una interfaz funcional dentro de model para la ventana q selecciona el color
-            /*
-            if (hayGanador) {
-                //ventana emergente de ganador
-            }
-*/
         }
     }
 
     public void ejecutarTurnoCpu(HBox cpu) {
-        PauseTransition pausa = new PauseTransition(Duration.seconds(1));
+        PauseTransition pausa = new PauseTransition(Duration.seconds(2));
         pausa.setOnFinished(e -> {
             turnoCpu(cpu);
 
@@ -335,13 +390,16 @@ public class MesaDeJuego {
                 Cartas carta = jugadorCPU.getCarta(i);
                 if(evaluar(carta)){
                     System.out.println("CPU tiro la carta del tipo:"+carta.getTipodecarta());
+
+                    cartaSelected(carta,controlador.getMazoPlayer());
+
                     //pa ver q monda tira
                     if(carta instanceof Comodines){
                         System.out.println("Es un :"+((Comodines) carta).getSimbolo()+"de color "+((Comodines) carta).getColor());
                     }else{
                         System.out.println("Es un :"+((CartasN) carta).getNumero()+"de color "+((CartasN) carta).getColor()+"\n");
                     }
-                    cartaSelected(carta,controlador.getMazoPlayer());
+
                     break;//como se encontro la carta se detiene el bucle
                 }
             }

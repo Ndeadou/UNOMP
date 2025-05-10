@@ -75,26 +75,14 @@ public class Baraja {
         Comodines bloqueoAmarillo = new Comodines(4, "comodin", "block", "/Cartas/skip_yellow.png");
         this.cartas.add(bloqueoAmarillo);
 
-        /*//Comodines +4
+        //Comodines +4
         Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
         this.cartas.add(mas4);
 
         //Comodines cambiodecolor
         Comodines cambioColor = new Comodines(0, "comodin", "camb", "/Cartas/wild.png");
         this.cartas.add(cambioColor);
-*/
+
     }
-
-
-
-    /*public static void main(String[] args) {
-        Baraja baraja = new Baraja();
-        System.out.println("Cantidad de cartas en la baraja: " + baraja.cantidadDeCartas());
-        Cartas primeraCarta = baraja.repartirCarta();
-        if (primeraCarta != null) {
-            System.out.println("Primera carta repartida: " + primeraCarta.getTipodecarta());
-        }
-        System.out.println("Cantidad de cartas después de repartir: " + baraja.cantidadDeCartas());
-    }*/
 }
 
