@@ -3,6 +3,7 @@ package com.example.uno.Model;
 import com.example.uno.Controller.HelloController;
 import javafx.animation.PauseTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -29,6 +30,11 @@ public class MesaDeJuego {
     Cartas cartaPila;
     String ganador;
     boolean cartasRepartidas = false;
+    //hilos
+    private boolean humanUnoCalled = false;
+    private boolean cpuUnoCalled   = false;
+    private boolean cpuCalledHuman = false;
+    //hilos
 
     //La siguiente funcion es la que le dará fin al juego.Verá si algun jugador ganó cambiando el bool "hayGanador"
     // ademas es la encargada de mostrar en la interfaz las felicitaciones etc..
@@ -153,15 +159,12 @@ public class MesaDeJuego {
         cartaButton.setOnMouseClicked(event -> {
             controlador.manejarClicCarta(event);
             jugadorH.removeCarta(carta);
+            //hilos
+            checkHumanUNO();
+            //hilos
             cartaPila = carta;
             cartaClicked(carta,controlador.getMazoCpu());
 
-
-            //Move o arregla la funcion directamente q esta basurota es la q no deja q funcione el code
-            if (jugadorH.mazoSize() == 1) { //Este condicional evalua si el tamaño de las cartas que tiene jugadorH es igual a 1
-                // y si es así llama a la funcion que está en hello controller que contiene el hilo
-                controlador.activarTemporizadorUNO(); // este método debe estar en HelloController
-            }
 
         });
 
@@ -191,6 +194,73 @@ public class MesaDeJuego {
     public int barajaSiz(){
         return baraja.size();
     }
+
+    //hilos
+    private void checkHumanUNO() {
+        if (jugadorH.mazoSize() == 1 && !humanUnoCalled) {
+            controlador.setUnoButtonEnabled(true);
+        }
+    }
+
+    private void checkCpuUNO() {
+        if (jugadorH.mazoSize() == 1 && !humanUnoCalled && !cpuCalledHuman) {
+            // habilita el botón para que TU cantes UNO
+            controlador.setUnoButtonEnabled(true);
+            // 1) temporizador que penaliza al humano si NO pulsa UNO
+            spawnHumanPenaltyTimer();
+            // 2) temporizador que simula a la CPU cantándote UNO
+            spawnCpuChallengeTimer();
+        }
+    }
+    /** Penaliza al humano si no pulseó UNO en 2–4 s */
+    private void spawnHumanPenaltyTimer() {
+        new Thread(() -> {
+            try {
+                int delay = 2000 + random.nextInt(2000);
+                Thread.sleep(delay);
+                Platform.runLater(() -> {
+                    if (!humanUnoCalled && !cpuCalledHuman) {
+                        humanUnoCalled = true;  // evita dobles penalizaciones
+                        controlador.setUnoButtonEnabled(false);
+                        repPlayer(controlador.getMazoPlayer());
+                        controlador.showMessage("¡No cantaste UNO a tiempo! Robas 1 carta.");
+                    }
+                });
+            } catch (InterruptedException ignored) {}
+        }).start();
+    }
+
+    /** CPU “canta UNO” al humano tras 2–4 s si nadie ha cantado */
+    private void spawnCpuChallengeTimer() {
+        new Thread(() -> {
+            try {
+                int delay = 2000 + random.nextInt(2000);
+                Thread.sleep(delay);
+                Platform.runLater(() -> {
+                    if (!humanUnoCalled && !cpuCalledHuman) {
+                        cpuCalledHuman = true;  // marca que la CPU ya hizo su jugada
+                        controlador.setUnoButtonEnabled(false);
+                        repPlayer(controlador.getMazoPlayer());
+                        controlador.showMessage("¡CPU te cantó UNO primero! Robas 1 carta.");
+                    }
+                });
+            } catch (InterruptedException ignored) {}
+        }).start();
+    }
+
+    public void handleHumanUNO() {
+        if (jugadorH.mazoSize() == 1 && !humanUnoCalled) {
+            humanUnoCalled = true;
+            controlador.setUnoButtonEnabled(false);
+            controlador.showMessage("¡Cantaste UNO a tiempo!");
+        } else if (jugadorCPU.mazoSize() == 1 && !cpuUnoCalled) {
+            cpuUnoCalled = true;
+            controlador.setUnoButtonEnabled(false);
+            controlador.showMessage("Cantaste UNO a la CPU. Ella roba 1 carta.");
+            repCpu(controlador.getMazoCpu());
+        }
+    }
+    //hilos
 
 
     //LOGICA """"
@@ -280,15 +350,16 @@ public class MesaDeJuego {
             cartaPila = carta;
             controlador.leerNuevaPila(cartaPila);
 
-            leerMazo(controlador.getMazoPlayer());
-            if (!hayGanador() && turno == 2) {
-                ejecutarTurnoCpu(controlador.getMazoCpu());
-            }else if(!hayGanador() && turno == 1){
-                leerMazoCpu(mazoCpu);
-            }else if(hayGanador()){
+            if(hayGanador()){
                 System.out.println("Hay Ganador y es : "+ganador);
                 turno = 0;
                 controlador.getMazoPlayer().getChildren().clear();
+            }
+            else{
+                leerMazo(controlador.getMazoPlayer());
+                if(turno == 2){
+                    ejecutarTurnoCpu(controlador.getMazoCpu());
+                }
             }
         } else if (carta instanceof CartasN) {
             //Aqui definimos lo que pasa si la carta es la de seleccionar color, ya que la de retorno ha sido eliminada
@@ -331,6 +402,9 @@ public class MesaDeJuego {
             cartaPila = carta;
             controlador.leerNuevaPila(cartaPila);
             jugadorCPU.removeCarta(carta);
+            //hilos
+            checkCpuUNO();
+            //hilos
             leerMazoCpu(controlador.getMazoCpu());
 
             if(hayGanador()){
@@ -348,6 +422,9 @@ public class MesaDeJuego {
             cartaPila = carta;
             controlador.leerNuevaPila(cartaPila);
             jugadorCPU.removeCarta(carta);
+            //hilos
+            checkCpuUNO();
+            //hilos
             leerMazoCpu(controlador.getMazoCpu());
             //leerMazo(mazoPlayer);
             turno = 1;
