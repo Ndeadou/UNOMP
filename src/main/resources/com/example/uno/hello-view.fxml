@@ -4,7 +4,6 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
 <VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.uno.Controller.HelloController">
     <padding>
@@ -22,10 +21,5 @@
             </graphic></Button>
       <ImageView fx:id="pila" fitHeight="100.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" translateY="-10.0" />
         <HBox fx:id="idMazo1" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" translateY="70.0" />
-      <Button fx:id="unoButton" disable="true" mnemonicParsing="false" onAction="#onUnoButtonClicked" text="UNO!" translateX="325.0" translateY="-100.0">
-         <font>
-            <Font size="15.0" />
-         </font>
-      </Button>
     </children>
 </VBox>

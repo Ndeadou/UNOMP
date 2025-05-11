@@ -26,7 +26,6 @@ public class HelloController {
 
     private MesaDeJuego mesa = new MesaDeJuego(HelloController.this);
 
-    @FXML private Button unoButton;
 
 
 
@@ -36,24 +35,7 @@ public class HelloController {
         mesa.mezclarBaraja();
         System.out.println("Tamaño de la baraja después de crear: " + mesa.barajaSiz());
         mesa.jugar(idMazo1, idMazo2);
-        //hilos
-        unoButton.setDisable(true);
-        //hilos
     }
-
-    //hilos
-    @FXML
-    public void onUnoButtonClicked() {
-        mesa.handleHumanUNO();
-    }
-    public void setUnoButtonEnabled(boolean enabled) {
-        unoButton.setDisable(!enabled);
-    }
-    public void showMessage(String msg) {
-        // Por ahora muestra en consola; puedes cambiar por un Label o Alert
-        System.out.println(msg);
-    }
-    //hilos
 
     @FXML
     public void darClickBaraja(){
