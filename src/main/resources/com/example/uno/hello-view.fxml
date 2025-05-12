@@ -21,5 +21,6 @@
             </graphic></Button>
       <ImageView fx:id="pila" fitHeight="100.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" translateY="-10.0" />
         <HBox fx:id="idMazo1" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" translateY="70.0" />
+      <Button fx:id="unoButton" mnemonicParsing="false" onAction="#handleUnoButton" disable= "true" text="UNO" translateX="250.0" translateY="-200.0" />
     </children>
 </VBox>

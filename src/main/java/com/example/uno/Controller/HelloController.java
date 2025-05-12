@@ -3,6 +3,7 @@ package com.example.uno.Controller;
 import com.example.uno.Model.Cartas;
 import com.example.uno.Model.MesaDeJuego;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
@@ -24,6 +25,11 @@ public class HelloController {
     @FXML
     private  ImageView pila;
 
+    //btn
+    @FXML
+    private Button unoButton;
+    //btn
+
     private MesaDeJuego mesa = new MesaDeJuego(HelloController.this);
 
 
@@ -43,12 +49,35 @@ public class HelloController {
         System.out.println("Tamaño de la baraja después de repartir: " + mesa.barajaSiz());
     }
 
+    //btn
+    /**
+     * 3) Método invocado al hacer clic en el botón “UNO”.
+     *    Marca la pulsación en la lógica y deshabilita el botón.
+     */
+    @FXML
+    public void handleUnoButton(ActionEvent event) {
+        mesa.onHumanPressUno();
+        unoButton.setDisable(true);
+    }
+    //btn
+
     public HBox getMazoPlayer() {
         return idMazo1;
     }
     public HBox getMazoCpu() {
         return idMazo2;
     }
+
+    //btn
+    /**
+     * 4) Getter para que MesaDeJuego pueda habilitar/deshabilitar el botón.
+     */
+    public Button getUnoButton() {
+        return unoButton;
+        /*EJEMPLO: Si no existiera este getter, MesaDeJuego no podría acceder al botón y no funcionaría la activación
+         cuando alguien llegue a ultima carta.*/
+    }
+    //btn
 
 
     /**La siguiente funcion recibe el evento clicked definida en mesa de Juego, para que funcionara se hicieron modificaciones

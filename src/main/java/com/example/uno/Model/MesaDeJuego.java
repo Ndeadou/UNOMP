@@ -31,6 +31,28 @@ public class MesaDeJuego {
     String ganador;
     boolean cartasRepartidas = false;
 
+    //btn
+    /**
+     * Flags que indican si cada lado pulsó “UNO”.
+     * volatile: asegura que los cambios se vean entre hilos.
+     */
+    private volatile boolean humanUnoPressed = false;
+    private volatile boolean cpuUnoPressed   = false;
+    //btn
+
+    private Random random = new Random();
+    /* EJEMPLO: Si creáramos un Random local en cada llamada,
+    podríamos terminar con patrones menos aleatorios y más objetos en memoria.
+    Evitar carreras duplicadas*/
+
+    //btn
+    /**
+     * Evita lanzar dos carreras UNO simultáneas para el mismo lado.
+     */
+    private boolean humanRaceStarted = false;
+    private boolean cpuRaceStarted   = false;
+    //btn
+
     //La siguiente funcion es la que le dará fin al juego.Verá si algun jugador ganó cambiando el bool "hayGanador"
     // ademas es la encargada de mostrar en la interfaz las felicitaciones etc..
     public boolean hayGanador(){
@@ -92,6 +114,15 @@ public class MesaDeJuego {
             System.out.println("Jugador COME");
             ejecutarTurnoCpu(controlador.getMazoCpu());*/
         }
+        //btn
+        /**
+         * 1) Detecta si el humano quedó con 1 carta y
+         *    lanza la carrera UNO para el humano.
+         */
+        if (cartasRepartidas && jugadorH.mazoSize() == 1) {
+            startUnoRace("H");
+        }
+        //btn
     }
 
     public void pausaJugador(HBox mazoPlayer) {
@@ -126,6 +157,16 @@ public class MesaDeJuego {
             mazoCpu.getChildren().add(cartaImageView);
 
         }
+
+        //btn
+        /**
+         * 2) Igual para la CPU: cuando baje a 1 carta,
+         *    lanza la carrera UNO para la CPU.
+         */
+        if (cartasRepartidas && jugadorCPU.mazoSize() == 1) {
+            startUnoRace("C");
+        }
+        //btn
     }
     // RECUERDA CREAR UN CLASE QUE EVALÚE LAS JUGADAS PARA AHORRAR CÒDIGO Y NO PONERLO AQUÍ
 
@@ -153,7 +194,8 @@ public class MesaDeJuego {
         //esta funcion es la clave para el click de las cartas.(elimina del mazo y añade a la pila)
         cartaButton.setOnMouseClicked(event -> {
             controlador.manejarClicCarta(event);
-            jugadorH.removeCarta(carta);
+            //jugadorH.removeCarta(carta); // esto se mueve a cartaclicked, no afecta el funcionamiento
+            //que remueve cartas, pero ayuda a que no se presenten bugs cuando el jugador utiliza el bloqueo
             cartaPila = carta;
             cartaClicked(carta,controlador.getMazoCpu());
 
@@ -251,6 +293,9 @@ public class MesaDeJuego {
 
 
     public void cartaClicked(Cartas carta, HBox mazoCpu) {
+        //btn
+        jugadorH.removeCarta(carta);
+        //btn
         if (carta instanceof Comodines){
             Comodines cartaC = (Comodines) carta;
             if (cartaC.getSimbolo() == "+2" ) {
@@ -303,7 +348,7 @@ public class MesaDeJuego {
             }
         }
     }
-    Random random = new Random();
+    //Random random = new Random(); se usa el private de arriba
     public void cartaSelected(Cartas carta, HBox mazoPlayer) {
         if (carta instanceof Comodines){
             Comodines cartaC = (Comodines) carta;
@@ -400,6 +445,112 @@ public class MesaDeJuego {
         }
     }
 
+    //hilo
+    /**
+     * 3) Inicia la “carrera UNO”:
+     *    - side = "H" para humano, "C" para CPU.
+     *    - Evita duplicados, resetea flags, habilita botón.
+     *    - Para humano: hilo Java 2–4 s.
+     *    - Para CPU: PauseTransition 0–4 s.
+     */
+    private void startUnoRace(String side) {
+        // 3.1) Prevenir duplicados
+        if ("H".equals(side)) {
+            if (humanRaceStarted) return;
+            humanRaceStarted = true;
+        } else {
+            if (cpuRaceStarted) return;
+            cpuRaceStarted = true;
+        }
+        // EJEMPLO: Sin esta comprobación,
+        // múltiples llamadas a startUnoRace("H") crearían hilos en cascada.
+
+        // 3.2) Limpiar quién pulsó
+        humanUnoPressed = false;
+        cpuUnoPressed   = false;
+        // EJEMPLO: Si no resetearas estos flags,
+        // en carreras posteriores seguirías teniendo marcados valores previos.
+
+        // 3.3) Mostrar botón UNO en la UI
+        Button unoBtn = controlador.getUnoButton();
+        unoBtn.setDisable(false);
+        // EJEMPLO: Si no habilitaras el botón aquí,
+        // el humano no tendría forma de pulsarlo para declarar UNO.
+
+        // 3.4) Arrancar el retraso
+        if ("H".equals(side)) {
+            // HUMANO: hilo clásico que duerme 2–4 segundos.
+            new Thread(() -> {
+                try {
+                    long delay = 2000 + random.nextInt(2000);
+                    Thread.sleep(delay);
+                    Platform.runLater(() -> {
+                        resolveUno("H");
+                        humanRaceStarted = false;
+                    });
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }).start();
+            // EJEMPLO: Si omitiréramos Thread.sleep(),
+            // resolveUno("H") se ejecutaría de inmediato,
+            // penalizando al humano antes de poder pulsar.
+        } else {
+            // CPU: PauseTransition de JavaFX 0–4 segundos.
+            double delaySec = random.nextDouble() * 4.0;
+            PauseTransition cpuDelay = new PauseTransition(Duration.seconds(delaySec));
+            cpuDelay.setOnFinished(ev -> {
+                resolveUno("C");
+                cpuRaceStarted = false;
+            });
+            cpuDelay.play();
+            // EJEMPLO: Sin usar PauseTransition (o similar),
+            // la CPU declararía UNO instantáneamente al llegar a 1 carta.
+        }
+    }
+
+    /**
+     * 4) Llamado por HelloController cuando el humano pulsa el botón:
+     *    marca el flag correspondiente.
+     */
+    public void onHumanPressUno() {
+        if (jugadorH.mazoSize() == 1) {
+            humanUnoPressed = true;
+            System.out.println("Jugador cantó UNO (propio).");
+        } else if (jugadorCPU.mazoSize() == 1) {
+            cpuUnoPressed = true;
+            System.out.println("Jugador cantó UNO por la CPU.");
+        }
+        // EJEMPLO: Si no diferenciáramos ambos casos,
+        // el humano no podría penalizar a la CPU y viceversa.
+    }
+
+    /**
+     * 5) Resuelve la carrera cuando expira el temporizador:
+     *    comprueba quién pulsó y aplica penalización o no.
+     */
+    private void resolveUno(String side) {
+        if ("H".equals(side)) {
+            if (!humanUnoPressed) {
+                System.out.println("Jugador NO cantó UNO a tiempo, penalización.");
+                repPlayer(controlador.getMazoPlayer());
+            } else {
+                System.out.println("Jugador cantó UNO a tiempo.");
+            }
+        } else { // CPU
+            if (!cpuUnoPressed) {
+                System.out.println("CPU canta UNO automáticamente.");
+                cpuUnoPressed = true;
+            } else {
+                System.out.println("CPU NO cantó UNO a tiempo, penalización.");
+                repCpu(controlador.getMazoCpu());
+            }
+        }
+        // EJEMPLO: Sin esta línea, el botón UNO seguiría habilitado
+        // y permitiría clics fuera de contexto para la siguiente mano.
+        controlador.getUnoButton().setDisable(true);
+    }
+    //hilo
 
 }
 
