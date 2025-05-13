@@ -4,23 +4,33 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.uno.Controller.HelloController">
-    <padding>
-        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-    </padding>
-    <children>
-      <HBox fx:id="idMazo2" prefHeight="100.0" prefWidth="200.0" />
-        <Button fx:id="idBaraja" minHeight="30.0" minWidth="30.0" mnemonicParsing="false" onAction="#darClickBaraja" prefHeight="88.0" prefWidth="70.0" translateX="-354.0" translateY="60.0">
-            <graphic>
-                <ImageView fitHeight="150.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+<StackPane xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.uno.Controller.HelloController">
+   <children>
+      <ImageView fitHeight="800.0" fitWidth="1080.0" pickOnBounds="true">
+         <image>
+            <Image url="@Tablero/Tablero.png" />
+         </image>
+      </ImageView>
+      <VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0">
+          <padding>
+              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+          </padding>
+          <children>
+                <ImageView fitHeight="150.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" translateX="-300.0" translateY="200.0">
                     <image>
                         <Image url="@../../../Cartas/deck_of_cards.png" />
                     </image>
                 </ImageView>
-            </graphic></Button>
-      <ImageView fx:id="pila" fitHeight="100.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" translateY="-10.0" />
-        <HBox fx:id="idMazo1" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" translateY="70.0" />
-      <Button fx:id="unoButton" mnemonicParsing="false" onAction="#handleUnoButton" disable= "true" text="UNO" translateX="250.0" translateY="-200.0" />
-    </children>
-</VBox>
+              <HBox fx:id="idMazo2" maxHeight="700.0" prefHeight="100.0" prefWidth="200.0" translateY="-80.0" />
+              <ImageView fx:id="pila" fitHeight="100.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" translateY="-10.0" />
+              <Pane fx:id="idMazo1" maxHeight="700.0" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" />
+              <Button fx:id="unoButton" disable="true" mnemonicParsing="false" onAction="#handleUnoButton" text="UNO" translateX="250.0" translateY="-200.0">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
+          </children>
+      </VBox>
+   </children>
+</StackPane>

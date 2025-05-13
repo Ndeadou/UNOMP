@@ -8,7 +8,9 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.util.Duration;
+import javafx.scene.effect.ColorAdjust;
 
 import java.util.Objects;
 import java.util.Random;
@@ -89,22 +91,38 @@ public class MesaDeJuego {
      * LAS SIGUIENTES DOS FUNCIONES SON HERRAMIENTAS PARA EL PLAYER HUMANO
      *
      */
-    public void repPlayer(HBox mazoPlayer) {
+    public void repPlayer(Pane mazoPlayer) {
             jugadorH.addCarta(baraja.getCarta(baraja.size() - 1));
             baraja.eliminarCarta(baraja.getCarta(baraja.size() - 1));
             leerMazo(mazoPlayer);
 
     }
-    public void leerMazo(HBox mazoPlayer) {
-        mazoPlayer.getChildren().clear();//Para entender esta linea silenciala y corre el juego dandole a baraja
-        for(int i = 0; i < jugadorH.mazoSize(); i++) {
-            Cartas carta = jugadorH.getCarta(i);
-            Button cartaButton = crearBotonCarta(carta, i, mazoPlayer);//El "i" se usa para la animacion de acordeon
-            mazoPlayer.getChildren().add(cartaButton);
-            if(turno != 1){
-                cartaButton.setDisable(true);
+    public void leerMazo(Pane mazoPlayer) {
+        Platform.runLater(() -> {
+            mazoPlayer.getChildren().clear();//Para entender esta linea silenciala y corre el juego dandole a baraja
+            int totalCartas = jugadorH.mazoSize();
+            double anchoDisponible = mazoPlayer.getWidth();
+            double anchoCarta = 75;
+            double espacioEntreCartas = anchoCarta;
+
+            if (totalCartas > 1) {
+                double maxEspacio = (anchoDisponible - anchoCarta) / (totalCartas - 1);
+                espacioEntreCartas = Math.min(anchoCarta, maxEspacio);
             }
-        }
+            for(int i = 0; i < jugadorH.mazoSize(); i++) {
+
+                Cartas carta = jugadorH.getCarta(i);
+                Button cartaButton = crearBotonCarta(carta, i, mazoPlayer);//El "i" se usa para la animacion de acordeon
+                cartaButton.setLayoutX(i * espacioEntreCartas);
+                cartaButton.setLayoutY(0); // Opcional si quieres alinearlo al borde superior
+                mazoPlayer.getChildren().add(cartaButton);
+                if(turno != 1){
+                    cartaButton.setDisable(true);
+                }
+            }
+
+        });
+
 
         if(turno == 1 && mazoVacio(jugadorH) && cartasRepartidas){
             pausaJugador(mazoPlayer);
@@ -125,8 +143,8 @@ public class MesaDeJuego {
         //btn
     }
 
-    public void pausaJugador(HBox mazoPlayer) {
-        PauseTransition pausa = new PauseTransition(Duration.seconds(2));
+    public void pausaJugador(Pane mazoPlayer) {
+        PauseTransition pausa = new PauseTransition(Duration.seconds(3));
         pausa.setOnFinished(e -> {
             turno = 2;
             repPlayer(mazoPlayer);
@@ -170,26 +188,40 @@ public class MesaDeJuego {
     }
     // RECUERDA CREAR UN CLASE QUE EVALÚE LAS JUGADAS PARA AHORRAR CÒDIGO Y NO PONERLO AQUÍ
 
-    public Button crearBotonCarta(Cartas carta, int indice, HBox mazoPlayer) {
+
+
+    public Button crearBotonCarta(Cartas carta, int indice, Pane mazoPlayer) {
         Button cartaButton = new Button();
+        cartaButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
         ImageView cartaImageView = new ImageView( new Image(getClass().getResourceAsStream(carta.getRutaImagen()))); // Preguntar al profe
         cartaImageView.setFitWidth(70);
         cartaImageView.setFitHeight(88);
         cartaButton.setGraphic( cartaImageView );
         cartaButton.setUserData(carta);
+        ColorAdjust grayscale = new ColorAdjust();
+        grayscale.setSaturation(-0.75);     // escala de grises
+        grayscale.setBrightness(-0.76);   // más oscuro
+        grayscale.setContrast(0.25);      // más definido
+
 
         //Ahora esta mejor escrita la bloqueada de cartas.
         if(turno == 1 ){
 
             if (evaluar(carta)){
                 cartaButton.setDisable(false);
+                cartaImageView.setEffect(null);
             }else {
                 cartaButton.setDisable(true);
+                cartaButton.setOpacity(1.0);
+                cartaImageView.setEffect(grayscale);
             }
         }else{
             cartaButton.setDisable(true);
+            cartaButton.setOpacity(1.0);
+            cartaImageView.setEffect(grayscale);
 
         }
+
 
         //esta funcion es la clave para el click de las cartas.(elimina del mazo y añade a la pila)
         cartaButton.setOnMouseClicked(event -> {
@@ -207,7 +239,7 @@ public class MesaDeJuego {
         // Efecto de elevación (opcional)
         cartaButton.setOnMouseEntered(event -> {
             TranslateTransition transition = new TranslateTransition(Duration.millis(200), cartaButton);
-            transition.setToY(-10);
+            transition.setToY(-25);
             transition.play();
         });
 
@@ -232,14 +264,15 @@ public class MesaDeJuego {
 
     //LOGICA """"
 
-    public void jugar(HBox mazoPlayer, HBox mazoCpu) {
+    public void jugar(Pane mazoPlayer, HBox mazoCpu) {
         cartaPila = baraja.getCarta(0);
         baraja.eliminarCarta(cartaPila);
         controlador.primCarta(cartaPila.getRutaImagen());
 
-        for(int i = 0; i < 5; i++) {
+
+        for(int i = 0; i < 25; i++) {
             repPlayer(mazoPlayer);
-            repCpu(mazoCpu);
+            //repCpu(mazoCpu);
         }cartasRepartidas = true;
         leerMazo(mazoPlayer);
 
@@ -349,7 +382,7 @@ public class MesaDeJuego {
         }
     }
     //Random random = new Random(); se usa el private de arriba
-    public void cartaSelected(Cartas carta, HBox mazoPlayer) {
+    public void cartaSelected(Cartas carta, Pane mazoPlayer) {
         if (carta instanceof Comodines){
             Comodines cartaC = (Comodines) carta;
             if (cartaC.getSimbolo() == "+2" ) {
@@ -400,7 +433,7 @@ public class MesaDeJuego {
     }
 
     public void ejecutarTurnoCpu(HBox cpu) {
-        PauseTransition pausa = new PauseTransition(Duration.seconds(2));
+        PauseTransition pausa = new PauseTransition(Duration.seconds(3));
         pausa.setOnFinished(e -> {
             turnoCpu(cpu);
 
@@ -485,8 +518,11 @@ public class MesaDeJuego {
                     long delay = 2000 + random.nextInt(2000);
                     Thread.sleep(delay);
                     Platform.runLater(() -> {
-                        resolveUno("H");
-                        humanRaceStarted = false;
+                        if (!hayGanador()) {
+                            resolveUno("H");
+                            humanRaceStarted = false;
+                        }
+
                     });
                 } catch (InterruptedException e) {
                     e.printStackTrace();
@@ -497,11 +533,14 @@ public class MesaDeJuego {
             // penalizando al humano antes de poder pulsar.
         } else {
             // CPU: PauseTransition de JavaFX 0–4 segundos.
-            double delaySec = random.nextDouble() * 4.0;
+            double delaySec = 1 + random.nextDouble() * 3.0;
             PauseTransition cpuDelay = new PauseTransition(Duration.seconds(delaySec));
             cpuDelay.setOnFinished(ev -> {
-                resolveUno("C");
-                cpuRaceStarted = false;
+                if(!hayGanador()){
+                    resolveUno("C");
+                    cpuRaceStarted = false;
+                }
+
             });
             cpuDelay.play();
             // EJEMPLO: Sin usar PauseTransition (o similar),
