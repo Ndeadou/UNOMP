@@ -10,14 +10,14 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 
 public class HelloController {
     @FXML
     private Button idBaraja;
 
-
     @FXML
-    private  HBox idMazo1;
+    private Pane idMazo1;
 
     @FXML
     private  HBox idMazo2;
@@ -61,7 +61,7 @@ public class HelloController {
     }
     //btn
 
-    public HBox getMazoPlayer() {
+    public Pane getMazoPlayer() {
         return idMazo1;
     }
     public HBox getMazoCpu() {
