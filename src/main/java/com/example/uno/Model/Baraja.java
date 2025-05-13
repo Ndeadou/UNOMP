@@ -7,10 +7,9 @@ public class Baraja {
 
     private ArrayList<Cartas> cartas = new ArrayList<>();
 
+    public void añadirCarta(Cartas carta) {cartas.add(carta);}
 
-    public void mezclarBaraja() {
-        Collections.shuffle(this.cartas);
-    }
+    public void mezclarBaraja() {Collections.shuffle(this.cartas);}
 
     public void eliminarCarta(Cartas carta) {
         this.cartas.remove(carta);
@@ -76,12 +75,12 @@ public class Baraja {
         this.cartas.add(bloqueoAmarillo);
 
         //Comodines +4
-        Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
-        this.cartas.add(mas4);
+        //Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
+        //this.cartas.add(mas4);
 
         //Comodines cambiodecolor
-        Comodines cambioColor = new Comodines(0, "comodin", "camb", "/Cartas/wild.png");
-        this.cartas.add(cambioColor);
+        //Comodines cambioColor = new Comodines(0, "comodin", "camb", "/Cartas/wild.png");
+        //this.cartas.add(cambioColor);
 
     }
 }
