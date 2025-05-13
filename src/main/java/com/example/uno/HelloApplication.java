@@ -12,7 +12,12 @@ public class HelloApplication extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/uno/hello-view.fxml"));
         Scene scene = new Scene(fxmlLoader.load(), 1080, 800);
-        stage.setTitle("Hello!");
+        stage.setTitle("UNO!");
+        // 🔒 Bloquear redimensionamiento
+        stage.setResizable(false);
+        // 🔒 Ocultar botón de maximizar
+        stage.initStyle(javafx.stage.StageStyle.DECORATED); // ya viene por defecto, solo para claridad
+        stage.centerOnScreen(); //centra la ventana
         stage.setScene(scene);
         stage.show();
     }
