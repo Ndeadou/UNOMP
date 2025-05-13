@@ -6,6 +6,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -17,10 +18,14 @@ public class HelloController {
     private Button idBaraja;
 
     @FXML
+    private Label lblColorActual;
+
+
+    @FXML
     private Pane idMazo1;
 
     @FXML
-    private  HBox idMazo2;
+    private  Pane idMazo2;
 
     @FXML
     private  ImageView pila;
@@ -37,8 +42,6 @@ public class HelloController {
 
     @FXML
     public void initialize() {
-        mesa.crearCartas();
-        mesa.mezclarBaraja();
         System.out.println("Tamaño de la baraja después de crear: " + mesa.barajaSiz());
         mesa.jugar(idMazo1, idMazo2);
     }
@@ -64,7 +67,7 @@ public class HelloController {
     public Pane getMazoPlayer() {
         return idMazo1;
     }
-    public HBox getMazoCpu() {
+    public Pane getMazoCpu() {
         return idMazo2;
     }
 
@@ -106,6 +109,20 @@ public class HelloController {
     public void primCarta(String cartaRuta) {
         Image imagen = new Image(getClass().getResourceAsStream(cartaRuta));
         pila.setImage(imagen);
+    }
+
+    public void mostrarColorActual(int color) {
+        String texto = switch (color) {
+            case 1 -> "Azul";
+            case 2 -> "Verde";
+            case 3 -> "Rojo";
+            case 4 -> "Amarillo";
+            default -> "Color inválido";
+        };
+        lblColorActual.setText("Color elegido: " + texto);
+    }
+    public void resetearColorActual(){
+        lblColorActual.setText("");
     }
 
 }
