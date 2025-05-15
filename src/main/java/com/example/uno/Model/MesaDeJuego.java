@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -19,11 +20,21 @@ import java.util.Random;
 
 public class MesaDeJuego {
 
-    private HelloController controlador;
+    private ImageView vistaPila;
+    private Pane mazoPlayer;
+    private Pane mazoCpu;
+    private Button unoButton;
+    private Label lblColorActual;
 
 
-    public MesaDeJuego(HelloController controlador) {
-        this.controlador = controlador;
+
+    public MesaDeJuego( Pane mazoPlayer, Pane mazoCpu, Button unoButton, ImageView vistaPila, Label lblColorActual) {
+
+        this.lblColorActual = lblColorActual;
+        this.mazoPlayer  = mazoPlayer;
+        this.mazoCpu     = mazoCpu;
+        this.unoButton = unoButton;
+        this.vistaPila = vistaPila;
     }
 
     Baraja baraja = new Baraja();
@@ -92,13 +103,13 @@ public class MesaDeJuego {
      * LAS SIGUIENTES DOS FUNCIONES SON HERRAMIENTAS PARA EL PLAYER HUMANO
      *
      */
-    public void repPlayer(Pane mazoPlayer) {
+    public void repPlayer() {
             jugadorH.addCarta(baraja.getCarta(baraja.size() - 1));
             baraja.eliminarCarta(baraja.getCarta(baraja.size() - 1));
-            leerMazo(mazoPlayer);
+            leerMazo();
 
     }
-    public void leerMazo(Pane mazoPlayer) {
+    public void leerMazo() {
         Platform.runLater(() -> {
             mazoPlayer.getChildren().clear();//Para entender esta linea silenciala y corre el juego dandole a baraja
             int totalCartas = jugadorH.mazoSize();
@@ -113,7 +124,7 @@ public class MesaDeJuego {
             for(int i = 0; i < jugadorH.mazoSize(); i++) {
 
                 Cartas carta = jugadorH.getCarta(i);
-                Button cartaButton = crearBotonCarta(carta, i, mazoPlayer);//El "i" se usa para la animacion de acordeon
+                Button cartaButton = crearBotonCarta(carta, i);//El "i" se usa para la animacion de acordeon
                 cartaButton.setLayoutX(i * espacioEntreCartas);
                 cartaButton.setLayoutY(0); // Opcional si quieres alinearlo al borde superior
                 mazoPlayer.getChildren().add(cartaButton);
@@ -126,7 +137,7 @@ public class MesaDeJuego {
 
 
         if(turno == 1 && mazoVacio(jugadorH) && cartasRepartidas){
-            pausaJugador(mazoPlayer);
+            pausaJugador();
             /*
             turno = 2;
             repPlayer(mazoPlayer);
@@ -144,13 +155,13 @@ public class MesaDeJuego {
         //btn
     }
 
-    public void pausaJugador(Pane mazoPlayer) {
+    public void pausaJugador() {
         PauseTransition pausa = new PauseTransition(Duration.seconds(3));
         pausa.setOnFinished(e -> {
             turno = 2;
-            repPlayer(mazoPlayer);
+            repPlayer();
             System.out.println("Jugador COME");
-            ejecutarTurnoCpu(controlador.getMazoCpu());
+            ejecutarTurnoCpu();
         });
         pausa.play();
     }
@@ -160,13 +171,13 @@ public class MesaDeJuego {
      */
 
 
-    public void repCpu(Pane mazoCpu) {
+    public void repCpu() {
         jugadorCPU.addCarta(baraja.getCarta(baraja.size() - 1));
         baraja.eliminarCarta(baraja.getCarta(baraja.size() - 1));
-        leerMazoCpu(mazoCpu);
+        leerMazoCpu();
 
     }
-    public void leerMazoCpu(Pane mazoCpu) {
+    public void leerMazoCpu() {
         mazoCpu.getChildren().clear();
         Platform.runLater(() -> {
             int totalCartas = jugadorCPU.mazoSize();
@@ -203,7 +214,7 @@ public class MesaDeJuego {
 
 
 
-    public Button crearBotonCarta(Cartas carta, int indice, Pane mazoPlayer) {
+    public Button crearBotonCarta(Cartas carta, int indice) {
         Button cartaButton = new Button();
         cartaButton.setStyle("-fx-background-color: transparent; -fx-border-color: transparent;");
         ImageView cartaImageView = new ImageView( new Image(getClass().getResourceAsStream(carta.getRutaImagen()))); // Preguntar al profe
@@ -238,11 +249,11 @@ public class MesaDeJuego {
 
         //esta funcion es la clave para el click de las cartas.(elimina del mazo y añade a la pila)
         cartaButton.setOnMouseClicked(event -> {
-            controlador.manejarClicCarta(event);
+            manejarClicCarta(event);
             //jugadorH.removeCarta(carta); // esto se mueve a cartaclicked, no afecta el funcionamiento
             //que remueve cartas, pero ayuda a que no se presenten bugs cuando el jugador utiliza el bloqueo
             cartaPila = carta;
-            cartaClicked(carta,controlador.getMazoCpu());
+            cartaClicked(carta);
 
 
         });
@@ -277,12 +288,12 @@ public class MesaDeJuego {
 
     //LOGICA """"
 
-    public void jugar(Pane mazoPlayer, Pane mazoCpu) {
+    public void jugar() {
         baraja.crearCartas();
         baraja.mezclarBaraja();
         cartaPila = baraja.getCarta(0);
         baraja.eliminarCarta(cartaPila);
-        controlador.primCarta(cartaPila.getRutaImagen());
+        primCarta(cartaPila.getRutaImagen());
         //Comodines +4
         Comodines mas4 = new Comodines(0, "comodin", "+4", "/Cartas/4_wild_draw.png");
         baraja.añadirCarta(mas4);
@@ -293,12 +304,11 @@ public class MesaDeJuego {
         baraja.mezclarBaraja();
 
 
-
         for(int i = 0; i < 5; i++) {
-            repPlayer(mazoPlayer);
-            repCpu(mazoCpu);
+            repPlayer();
+            repCpu();
         }cartasRepartidas = true;
-        leerMazo(mazoPlayer);
+        leerMazo();
 
     }
 
@@ -350,58 +360,58 @@ public class MesaDeJuego {
 
 
 
-    public void cartaClicked(Cartas carta, Pane mazoCpu) {
+    public void cartaClicked(Cartas carta) {
         //btn
         jugadorH.removeCarta(carta);
         //btn
-        controlador.resetearColorActual();
+        resetearColorActual();
 
         if (carta instanceof Comodines) {
             Comodines cartaC = (Comodines) carta;
             int colorElegido = 0;
             if (cartaC.getSimbolo() == "+2") {
                 for (int i = 0; i < 2; i++) {
-                    repCpu(mazoCpu);
+                    repCpu();
                 }
                 System.out.println("Jugador tiro comodin +2");
             } else if (cartaC.getSimbolo() == "+4") {
                 for (int i = 0; i < 4; i++) {
-                    repCpu(mazoCpu);
+                    repCpu();
                 }
                 System.out.println("Jugador tiro comodin +4");
                 colorElegido = VentanaEmergente.mostrarDialogoSeleccionColor();
                 carta.setColor(colorElegido);
-                controlador.mostrarColorActual(colorElegido); //
+                mostrarColorActual(colorElegido); //
             } else if (cartaC.getSimbolo() == "block") {
                 System.out.println("Jugador tiro comodin BLOQUEO");
                 //No pasa nada, se supone que el turno sigue siendo el mismo
             } else if (cartaC.getSimbolo() == "camb") {
                 colorElegido = VentanaEmergente.mostrarDialogoSeleccionColor();
                 carta.setColor(colorElegido);
-                controlador.mostrarColorActual(colorElegido);
+                mostrarColorActual(colorElegido);
                 turno = 2;
             }
             cartaPila = carta;
-            controlador.leerNuevaPila(cartaPila);
+            leerNuevaPila(cartaPila);
 
             if (hayGanador()) {
                 System.out.println("Hay Ganador y es : " + ganador);
                 turno = 0;
-                controlador.getMazoPlayer().getChildren().clear();
+                mazoPlayer.getChildren().clear();
             } else {
                 if (cartasRepartidas && jugadorH.mazoSize() == 1) {
                     startUnoRace("H");
                 }
-                leerMazo(controlador.getMazoPlayer());
+                leerMazo();
                 if (turno == 2) {
-                    ejecutarTurnoCpu(controlador.getMazoCpu());
+                    ejecutarTurnoCpu();
                 }
             }
         } else if (carta instanceof CartasN) {
             //Aqui definimos lo que pasa si la carta es la de seleccionar color, ya que la de retorno ha sido eliminada
             //Usa gemini para crear una interfaz funcional dentro de model para la ventana q selecciona el color
             cartaPila = carta;
-            controlador.leerNuevaPila(cartaPila);
+            leerNuevaPila(cartaPila);
             //texto pa ver q pasa
             CartasN cartaN = (CartasN) carta;
             System.out.println("Jugador tiro NUMERO: "+cartaN.getNumero());
@@ -410,9 +420,9 @@ public class MesaDeJuego {
             if (cartasRepartidas && jugadorH.mazoSize() == 1) {
                 startUnoRace("H");
             }
-            leerMazo(controlador.getMazoPlayer());
+            leerMazo();
             if (!hayGanador()) {
-                ejecutarTurnoCpu(controlador.getMazoCpu());
+                ejecutarTurnoCpu();
             }else{
                 System.out.println("Hay Ganador y es : "+ ganador);
                 turno = 0;
@@ -420,80 +430,80 @@ public class MesaDeJuego {
         }
     }
     //Random random = new Random(); se usa el private de arriba
-    public void cartaSelected(Cartas carta, Pane mazoPlayer) {
-        controlador.resetearColorActual();
+    public void cartaSelected(Cartas carta) {
+        resetearColorActual();
         if (carta instanceof Comodines){
             int colorElegido = 0;
             Comodines cartaC = (Comodines) carta;
             if (cartaC.getSimbolo() == "+2" ) {
                 for (int i = 0; i <2; i++){
-                    repPlayer(mazoPlayer);
+                    repPlayer();
                 }
             } else if (cartaC.getSimbolo() == "+4"){
                 for (int i = 0; i < 4; i++){
-                    repPlayer(mazoPlayer);
+                    repPlayer();
                 }colorElegido = random.nextInt(4) + 1;
-                controlador.mostrarColorActual(colorElegido);
+                mostrarColorActual(colorElegido);
                 carta.setColor(colorElegido);
             } else if (cartaC.getSimbolo() == "block"){
                 //No pasa nada, se supone que el turno sigue siendo el mismo
             } else if (cartaC.getSimbolo() == "camb") {
                 turno = 1;
                 colorElegido = random.nextInt(4) + 1;
-                controlador.mostrarColorActual(colorElegido);
+                mostrarColorActual(colorElegido);
                 carta.setColor(colorElegido);
             }
 
             cartaPila = carta;
-            controlador.leerNuevaPila(cartaPila);
+            leerNuevaPila(cartaPila);
             jugadorCPU.removeCarta(carta);
-            leerMazoCpu(controlador.getMazoCpu());
+            leerMazoCpu();
 
             if(hayGanador()){
                 System.out.println("Hay Ganador y es : "+ganador);
                 turno = 0;
             }
-            leerMazo(mazoPlayer);
+            leerMazo();
 
             if(turno == 2){
-                ejecutarTurnoCpu(controlador.getMazoCpu());
+                ejecutarTurnoCpu();
             }
 
 
         } else if(carta instanceof CartasN){
             cartaPila = carta;
-            controlador.leerNuevaPila(cartaPila);
+            leerNuevaPila(cartaPila);
             jugadorCPU.removeCarta(carta);
-            leerMazoCpu(controlador.getMazoCpu());
+            leerMazoCpu();
             //leerMazo(mazoPlayer);
             turno = 1;
             if(hayGanador()){
                 System.out.println("Hay Ganador y es : "+ganador);
                 turno = 0;
             }
-            leerMazo(mazoPlayer);
+            leerMazo();
 
         }
     }
 
-    public void ejecutarTurnoCpu(Pane cpu) {
+    public void ejecutarTurnoCpu() {
         PauseTransition pausa = new PauseTransition(Duration.seconds(3));
         pausa.setOnFinished(e -> {
-            turnoCpu(cpu);
+            turnoCpu();
 
         });
         pausa.play();
     }
-    public void turnoCpu(Pane cpu) {
+    public void turnoCpu() {
         //Aqui ejecutar el darTiempo()
 
         System.out.println("TURNO DE CPU");
         if(mazoVacio(jugadorCPU)){
             System.out.println("CPU comio \n");
-            repCpu(cpu);
+            repCpu();
             //leerMazo(controlador.getMazoPlayer());
             turno = 1;
-            leerMazo(controlador.getMazoPlayer());
+            leerMazo();
             /*
             AQUI Y EN DONDE SE CAMBIE EL TURNO A 1, HAY QUE HAYAR LA MANERA DE DESBLOQUEAR LOS BOTONES NUEVAMENTE
             SIN LLAMAR A LA FUNCION CREAR BOTON, YA QUE AHI ESTA ESE CONDICIONAL(103 Line) Y POR ESO FALLA EL JUEGO
@@ -507,7 +517,7 @@ public class MesaDeJuego {
                 if(evaluar(carta)){
                     System.out.println("CPU tiro la carta del tipo:"+carta.getTipodecarta());
 
-                    cartaSelected(carta,controlador.getMazoPlayer());
+                    cartaSelected(carta);
 
                     //pa ver q monda tira
                     if(carta instanceof Comodines){
@@ -549,8 +559,8 @@ public class MesaDeJuego {
         // en carreras posteriores seguirías teniendo marcados valores previos.
 
         // 3.3) Mostrar botón UNO en la UI
-        Button unoBtn = controlador.getUnoButton();
-        unoBtn.setDisable(false);
+
+        unoButton.setDisable(false);
         // EJEMPLO: Si no habilitaras el botón aquí,
         // el humano no tendría forma de pulsarlo para declarar UNO.
 
@@ -616,7 +626,7 @@ public class MesaDeJuego {
         if ("H".equals(side)) {
             if (!humanUnoPressed) {
                 System.out.println("Jugador NO cantó UNO a tiempo, penalización.");
-                repPlayer(controlador.getMazoPlayer());
+                repPlayer();
             } else {
                 System.out.println("Jugador cantó UNO a tiempo.");
             }
@@ -626,15 +636,51 @@ public class MesaDeJuego {
                 cpuUnoPressed = true;
             } else {
                 System.out.println("CPU NO cantó UNO a tiempo, penalización.");
-                repCpu(controlador.getMazoCpu());
+                repCpu();
             }
         }
         // EJEMPLO: Sin esta línea, el botón UNO seguiría habilitado
         // y permitiría clics fuera de contexto para la siguiente mano.
-        controlador.getUnoButton().setDisable(true);
+        unoButton.setDisable(true);
     }
     //hilo
 
+    public void manejarClicCarta(MouseEvent event) {
+        Button cartaButtonClickeada = (Button) event.getSource();
+        Cartas cartaAsociada = (Cartas) cartaButtonClickeada.getUserData();
+        if (cartaAsociada != null) {
+            String rutaImagen = cartaAsociada.getRutaImagen();
+            Image imagen = new Image(getClass().getResourceAsStream(rutaImagen));
+            vistaPila.setImage(imagen);
+        } else {
+            System.out.println("No se encontró información de la carta en el botón.");
+        }
+    }
+
+    public void primCarta(String cartaRuta) {
+        Image imagen = new Image(getClass().getResourceAsStream(cartaRuta));
+        vistaPila.setImage(imagen);
+    }
+
+    public void resetearColorActual(){
+        lblColorActual.setText("");
+    }
+
+    public void mostrarColorActual(int color) {
+        String texto = switch (color) {
+            case 1 -> "Azul";
+            case 2 -> "Verde";
+            case 3 -> "Rojo";
+            case 4 -> "Amarillo";
+            default -> "Color inválido";
+        };
+        lblColorActual.setText("Color elegido: " + texto);
+    }
+
+    public void leerNuevaPila(Cartas carta) {
+        Image imagen = new Image(getClass().getResourceAsStream(carta.getRutaImagen()));
+        vistaPila.setImage(imagen);
+    }
 }
 
 
