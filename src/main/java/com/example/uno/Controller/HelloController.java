@@ -44,22 +44,18 @@ public class HelloController {
     @FXML
     private Button unoButton;
     //btn
+    private MesaDeJuego mesa;
 
-    private MesaDeJuego mesa = new MesaDeJuego(HelloController.this);
+    //private MesaDeJuego mesa = new MesaDeJuego(HelloController.this, idMazo1, idMazo2, unoButton);
 
 
 
 
     @FXML
     public void initialize() {
+        mesa = new MesaDeJuego( idMazo1, idMazo2, unoButton, pila, lblColorActual);
         System.out.println("Tamaño de la baraja después de crear: " + mesa.barajaSiz());
-        mesa.jugar(idMazo1, idMazo2);
-    }
-
-    @FXML
-    public void darClickBaraja(){
-        mesa.repPlayer( idMazo1);// Pasar idMazo1 como argumento
-        System.out.println("Tamaño de la baraja después de repartir: " + mesa.barajaSiz());
+        mesa.jugar();
     }
 
     //btn
@@ -119,22 +115,6 @@ public class HelloController {
     }
 
 
-    public Pane getMazoPlayer() {
-        return idMazo1;
-    }
-    public Pane getMazoCpu() {
-        return idMazo2;
-    }
-
-    //btn
-    /**
-     * 4) Getter para que MesaDeJuego pueda habilitar/deshabilitar el botón.
-     */
-    public Button getUnoButton() {
-        return unoButton;
-        /*EJEMPLO: Si no existiera este getter, MesaDeJuego no podría acceder al botón y no funcionaría la activación
-         cuando alguien llegue a ultima carta.*/
-    }
     //btn
 
 
@@ -145,39 +125,10 @@ public class HelloController {
      * En resumen se instancio el controlador original en mesa de juego para usar la funcion de abajo.
 
      */
-    public void manejarClicCarta(MouseEvent event) {
-        Button cartaButtonClickeada = (Button) event.getSource();
-        Cartas cartaAsociada = (Cartas) cartaButtonClickeada.getUserData();
-        if (cartaAsociada != null) {
-            String rutaImagen = cartaAsociada.getRutaImagen();
-            Image imagen = new Image(getClass().getResourceAsStream(rutaImagen));
-            pila.setImage(imagen);
-        } else {
-            System.out.println("No se encontró información de la carta en el botón.");
-        }
-    }
     public void leerNuevaPila(Cartas carta) {
         Image imagen = new Image(getClass().getResourceAsStream(carta.getRutaImagen()));
         pila.setImage(imagen);
     }
 
-    public void primCarta(String cartaRuta) {
-        Image imagen = new Image(getClass().getResourceAsStream(cartaRuta));
-        pila.setImage(imagen);
-    }
-
-    public void mostrarColorActual(int color) {
-        String texto = switch (color) {
-            case 1 -> "Azul";
-            case 2 -> "Verde";
-            case 3 -> "Rojo";
-            case 4 -> "Amarillo";
-            default -> "Color inválido";
-        };
-        lblColorActual.setText("Color elegido: " + texto);
-    }
-    public void resetearColorActual(){
-        lblColorActual.setText("");
-    }
 
 }

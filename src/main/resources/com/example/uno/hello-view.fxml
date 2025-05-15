@@ -36,9 +36,9 @@
                         <Image url="@Tableroboton/adea.png" />
                      </image></ImageView>
                </graphic></Button>
-            <Label fx:id="lblColorActual" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="" textFill="white" translateX="25.0" translateY="-200.0">
+            <Label fx:id="lblColorActual" style="-fx-font-size: 18px; -fx-font-family: 'Comic Sans MS';" text="" textFill="white" translateX="25.0" translateY="-200.0">
                <font>
-                  <Font name="System Bold" size="13.0" />
+                  <Font name="MS Gothic" size="14.0" />
                </font></Label>
             <Button fx:id="btnInstrucciones" mnemonicParsing="false" onAction="#mostrarInstrucciones" text="Instrucciones" translateX="481.0" translateY="-709.0">
                <font>
