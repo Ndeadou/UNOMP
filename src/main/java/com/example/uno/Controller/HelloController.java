@@ -2,10 +2,8 @@ package com.example.uno.Controller;
 
 import com.example.uno.Model.Cartas;
 import com.example.uno.Model.MesaDeJuego;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -13,23 +11,20 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+/**
+ * @author Miguel Descance
+ * @author Erick Obando
+ * @version 1.0
+ */
 
 public class HelloController {
-    @FXML
-    private Button idBaraja;
 
     @FXML
     private Label lblColorActual;
-
-    @FXML
-    private Button btnInstrucciones;
 
     @FXML
     private Pane idMazo1;
@@ -40,36 +35,31 @@ public class HelloController {
     @FXML
     private  ImageView pila;
 
-    //btn
     @FXML
     private Button unoButton;
-    //btn
     private MesaDeJuego mesa;
-
-    //private MesaDeJuego mesa = new MesaDeJuego(HelloController.this, idMazo1, idMazo2, unoButton);
-
-
-
 
     @FXML
     public void initialize() {
         mesa = new MesaDeJuego( idMazo1, idMazo2, unoButton, pila, lblColorActual);
-        System.out.println("Tamaño de la baraja después de crear: " + mesa.barajaSiz());
         mesa.jugar();
     }
 
-    //btn
     /**
-     * 3) Método invocado al hacer clic en el botón “UNO”.
-     *    Marca la pulsación en la lógica y deshabilita el botón.
+     * Este método es invocado al hacer clic en el botón “UNO”.
+     * Marca la pulsación en la lógica y deshabilita el botón.
+     * @see MesaDeJuego
      */
     @FXML
     public void handleUnoButton(ActionEvent event) {
         mesa.onHumanPressUno();
         unoButton.setDisable(true);
     }
-    //btn
 
+    /**
+     * Este método se encarga de mostrar una ventana emergente
+     * con las reglas e indicaciones del juego UNO.
+     */
     @FXML
     public void mostrarInstrucciones() {
         // Crear texto de instrucciones
@@ -113,22 +103,4 @@ public class HelloController {
         ventana.setResizable(false);
         ventana.show();
     }
-
-
-    //btn
-
-
-    /**La siguiente funcion recibe el evento clicked definida en mesa de Juego, para que funcionara se hicieron modificaciones
-     * en la clase MesaDeJuego, importamos la clase controladora para instanciar un controlador y añadirlo como atributo
-     * al constructor de la mesa de juego(revisar la linea 15 y 17 en MesaDeJuego y 29 en HelloController).
-     * Todo esto con el fin de poder usar la funcion de abajo dentro de la clase MesaDeJuego.
-     * En resumen se instancio el controlador original en mesa de juego para usar la funcion de abajo.
-
-     */
-    public void leerNuevaPila(Cartas carta) {
-        Image imagen = new Image(getClass().getResourceAsStream(carta.getRutaImagen()));
-        pila.setImage(imagen);
-    }
-
-
 }

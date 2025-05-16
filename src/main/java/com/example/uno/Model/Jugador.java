@@ -2,6 +2,12 @@ package com.example.uno.Model;
 
 import java.util.ArrayList;
 
+/**
+ * @author Miguel Descance
+ * @author Erick Obando
+ * @version 1.0
+ */
+
 public class Jugador {
 
     private  ArrayList<Cartas> mazo = new ArrayList();

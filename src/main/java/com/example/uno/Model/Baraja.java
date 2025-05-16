@@ -3,6 +3,12 @@ package com.example.uno.Model;
 import java.util.ArrayList;
 import java.util.Collections;
 
+/**
+ * @author Miguel Descance
+ * @author Erick Obando
+ * @version 1.0
+ */
+
 public class Baraja {
 
     private ArrayList<Cartas> cartas = new ArrayList<>();

@@ -1,5 +1,11 @@
 package com.example.uno.Model;
 
+/**
+ * @author Miguel Descance
+ * @author Erick Obando
+ * @version 1.0
+ */
+
 public class Cartas {
 
     private String ruta;
