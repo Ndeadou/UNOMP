@@ -1,6 +1,5 @@
 package com.example.uno.Controller;
 
-import com.example.uno.Model.Cartas;
 import com.example.uno.Model.MesaDeJuego;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,13 +8,16 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 /**
+ * Esta clase es el controlador de la vista FXML.
+ * Inyecta los nodos (Pane del mazo, Button de UNO, ImageView de la pila, Label de color, etc.).
+ * Inicializa el motor de juego (lógica) (MesaDeJuego) pasándole esos nodos.
+ * Actúa como puente entre los eventos de UI (clics, pulsaciones) y el modelo de juego.
  * @author Miguel Descance
  * @author Erick Obando
  * @version 1.0
@@ -37,8 +39,13 @@ public class HelloController {
 
     @FXML
     private Button unoButton;
+
     private MesaDeJuego mesa;
 
+    /**
+     * Este método conecta la lógica del juego con los componentes gráficos
+     * y arranca la partida en cuanto la ventana aparece
+     */
     @FXML
     public void initialize() {
         mesa = new MesaDeJuego( idMazo1, idMazo2, unoButton, pila, lblColorActual);
@@ -46,19 +53,8 @@ public class HelloController {
     }
 
     /**
-     * Este método es invocado al hacer clic en el botón “UNO”.
-     * Marca la pulsación en la lógica y deshabilita el botón.
-     * @see MesaDeJuego
-     */
-    @FXML
-    public void handleUnoButton(ActionEvent event) {
-        mesa.onHumanPressUno();
-        unoButton.setDisable(true);
-    }
-
-    /**
      * Este método se encarga de mostrar una ventana emergente
-     * con las reglas e indicaciones del juego UNO.
+     * con las reglas e indicaciones del juego
      */
     @FXML
     public void mostrarInstrucciones() {

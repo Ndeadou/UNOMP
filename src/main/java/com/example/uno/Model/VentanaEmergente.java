@@ -1,19 +1,22 @@
 package com.example.uno.Model;
 
-
-import javafx.application.Platform;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
-
-import java.util.concurrent.atomic.AtomicReference;
-
-
+/**
+ * Esta clase muestra una ventana emergente para la elección de color
+ * por parte del usuario
+ * @author Miguel Descance
+ * @author Erick Obando
+ * @version 1.0
+ */
 public class VentanaEmergente {
 
-
+    /**
+     * Este método crea y muestra una ventana de diálogo en la que el usuario
+     * elije un color y devuelve el color elegido.
+     * @return dialogo.getResult
+     */
     public static int mostrarDialogoSeleccionColor() {
         Dialog<Integer> dialogo = new Dialog<>();
         dialogo.setTitle("Selecciona un color");

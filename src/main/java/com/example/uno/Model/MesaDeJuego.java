@@ -15,6 +15,13 @@ import java.util.Objects;
 import java.util.Random;
 
 /**
+ * Esta clase es la lógica del UNO:
+ * Crea y mezcla la baraja, reparte las cartas a humano y CPU.
+ * Controla los turnos, los efectos de  las cartas,
+ * çel temporizador de “UNO” (hilos y transiciones).
+ * Actualiza los Pane, Button, ImageView
+ * y Label inyectados para reflejar el estado actual del juego.
+ * Gestiona las penalizaciones y detecta el ganador.
  * @author Miguel Descance
  * @author Erick Obando
  * @version 1.0
@@ -645,6 +652,7 @@ public class MesaDeJuego {
      * Este método añade la imagen de la carta clickeada al ImageView correspondiente
      * a la pila
      * @param carta
+     * @see Cartas
      */
     public void manejarClicCarta(Cartas carta) {
         if (carta != null) {
@@ -684,6 +692,7 @@ public class MesaDeJuego {
      * Este método se encarga de actualizar la imagen de la pila de descarte
      * con la carta que se le pase
      * @param carta
+     * @see Cartas
      */
     public void leerNuevaPila(Cartas carta) {
         Image imagen = new Image(getClass().getResourceAsStream(carta.getRutaImagen()));

@@ -8,12 +8,20 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 /**
+ * Esta clase es el punto de entrada de la aplicación JavaFX.
+ * Se encarga de cargar el FXML (hello-view.fxml), levantar la escena y mostrar la ventana principal.
  * @author Miguel Descance
  * @author Erick Obando
  * @version 1.0
  */
 
 public class HelloApplication extends Application {
+
+    /**
+     * Este método se encarga de cargar la escena que guarda el fxml (interfaz gráfica)
+     * @param stage
+     * @throws IOException
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/com/example/uno/hello-view.fxml"));
@@ -28,6 +36,10 @@ public class HelloApplication extends Application {
         stage.show();
     }
 
+    /**
+     * Este método Inicializa el entorno de JavaFX
+     * @param args
+     */
     public static void main(String[] args) {
         launch();
     }
