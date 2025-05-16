@@ -1,5 +1,11 @@
 package com.example.uno.Model;
 
+/**
+ * @author Miguel Descance
+ * @author Erick Obando
+ * @version 1.0
+ */
+
 public class  Comodines extends Cartas {
 
     //Tipos de comodines 4, Reversa, Bloqueo, +2, +4
