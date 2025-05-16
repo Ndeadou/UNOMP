@@ -26,7 +26,7 @@
               <Pane fx:id="idMazo2" maxHeight="700.0" prefHeight="100.0" prefWidth="200.0" translateY="-20.0" />
               <ImageView fx:id="pila" fitHeight="100.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true" scaleX="1.15" translateX="20.0" translateY="50.0" />
               <Pane fx:id="idMazo1" maxHeight="700.0" minHeight="30.0" minWidth="30.0" prefHeight="88.0" prefWidth="70.0" translateX="-10.0" translateY="145.0" />
-              <Button fx:id="unoButton" disable="true" mnemonicParsing="false" onAction="#handleUnoButton" scaleX="0.6" scaleY="0.7" style="-fx-background-color: transparent;" translateX="140.0" translateY="-190.0">
+              <Button fx:id="unoButton" disable="true" mnemonicParsing="false" scaleX="0.6" scaleY="0.7" style="-fx-background-color: transparent;" translateX="140.0" translateY="-190.0">
                <font>
                   <Font size="14.0" />
                </font>
